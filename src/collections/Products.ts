@@ -4,6 +4,9 @@ import { CollectionConfig } from 'payload';
 export const Products: CollectionConfig = {
   slug: 'products',
   labels: { singular: 'Product', plural: 'Products' },
+  access: {
+    read: () => true,
+  },
   admin: { useAsTitle: 'productName' },
   fields: [
     { name: 'productName', type: 'text', required: true },
