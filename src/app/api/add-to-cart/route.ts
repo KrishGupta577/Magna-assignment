@@ -67,12 +67,31 @@ export const POST = async (request: Request) => {
       updatedCart = [...cart, { product: productId, quantity }];
     }
 
+    // Normalize cart items so `product` is always the product id (string)
+    // Normalize and dedupe cart items so each product appears only once.
+    const normalizedMap: Record<string, { product: any; quantity: number }> = {};
+    (updatedCart || []).forEach((item: any) => {
+      const raw = item.product;
+      const productIdVal = typeof raw === 'object' ? (raw?.id ?? raw?._id ?? raw) : raw;
+      const key = String(productIdVal);
+      if (!normalizedMap[key]) {
+        normalizedMap[key] = { product: productIdVal, quantity: Number(item.quantity) || 0 };
+      } else {
+        normalizedMap[key].quantity += Number(item.quantity) || 0;
+      }
+    });
+
+    const normalizedCart = Object.keys(normalizedMap).map((k) => normalizedMap[k]);
+
+    // Debug log to help diagnose validation issues in production logs
+    console.debug('Updating user cart with normalizedCart:', normalizedCart);
+
     const updatedUser = await payload.update({
       collection: 'site-users',
       id: user.id,
-      data: { cart: updatedCart },
+      // cast to any to avoid TypeScript relationship typing mismatch at compile time
+      data: { cart: normalizedCart as any },
     });
-
     const items = (updatedUser.cart || []).map((it: any) => {
       const raw = it.product;
       const id =
