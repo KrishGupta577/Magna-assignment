@@ -1,7 +1,7 @@
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // Adjust path as needed
+import { authOptions } from '@/app/api/auth/authOptions'; // Adjust path as needed
 
 export const POST = async (req: Request) => {
   try {
