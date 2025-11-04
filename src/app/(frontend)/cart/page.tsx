@@ -9,7 +9,6 @@ export default function CartPage() {
 
     useEffect(() => {
         fetchCart();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     console.log('CartPage items:', items);

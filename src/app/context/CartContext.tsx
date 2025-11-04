@@ -26,7 +26,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   // Fetch cart items from backend
   const fetchCart = async () => {
     try {
-      const res = await fetch("/api/cart", { cache: "no-store" });
+      const res = await fetch("/api/cart", { cache: "no-store",credentials: "include", });
       if (!res.ok) {
         setItems([]);
         return;
@@ -57,6 +57,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId, quantity }),
+        credentials: "include",
       });
       const data = await res.json().catch(() => null);
       if (res.ok && data && Array.isArray(data.items)) {
@@ -108,6 +109,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId }),
+        credentials: "include",
       })
       if (!res.ok) {
         // fallback to server state

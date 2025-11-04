@@ -10,7 +10,7 @@ export default function WishlistPage() {
     const fetchWishlist = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/wishlist');
+            const res = await fetch('/api/wishlist', { credentials: "include", });
             if (!res.ok) {
                 setItems([]);
                 return;

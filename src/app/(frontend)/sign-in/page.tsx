@@ -30,7 +30,7 @@ export default function SignInPage() {
 
         try {
             setLoading(true)
-            const res = await fetch('/api/sign-in', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+            const res = await fetch('/api/sign-in', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form), credentials: "include", })
             const data = await res.json()
             if (!res.ok) {
                 setError(data.error || data.message || 'Sign in failed')

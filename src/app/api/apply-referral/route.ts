@@ -2,6 +2,7 @@ import { getPayload } from "payload";
 import configPromise from "@payload-config";
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/authOptions'; // Adjust path as needed
+import { cookies } from "next/headers";
 
 export const POST = async (req: Request) => {
   try {
@@ -9,17 +10,25 @@ export const POST = async (req: Request) => {
 
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id || !session?.user?.email) {
-      return Response.json({ message: "Not authenticated" }, { status: 401 });
+    const cookieStore = cookies();
+    const sessionUserCookie = (await cookieStore).get('session-user'); // custom cookie for guest
+
+    let userEmail: string | undefined = session?.user?.email;
+
+    if (!userEmail && sessionUserCookie?.value) {
+      const parsedCookie = JSON.parse(sessionUserCookie.value || '{}');
+      userEmail = parsedCookie?.email;
     }
 
-    console.log('Referral - Session user ID:', session.user.id, 'type:', typeof session.user.id);
-
+    if (!userEmail) {
+      return Response.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    
     const payload = await getPayload({ config: configPromise });
 
     const currentUserData = await payload.find({
       collection: "site-users",
-      where: { email: { equals: session.user.email } },
+      where: { email: { equals: userEmail } },
       limit: 1,
     });
 

@@ -11,7 +11,7 @@ export default function ProfilePage() {
 
     const loadUser = async () => {
         try {
-            const res = await fetch("/api/user");
+            const res = await fetch("/api/user", { credentials: "include", });
             if (!res.ok) return;
             const data = await res.json();
             setUser(data);

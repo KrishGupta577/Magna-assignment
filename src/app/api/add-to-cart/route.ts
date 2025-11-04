@@ -2,6 +2,7 @@ import configPromise from '@payload-config';
 import { getPayload } from 'payload';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/authOptions';
+import { cookies } from 'next/headers';
 
 export const POST = async (request: Request) => {
   try {
@@ -12,9 +13,19 @@ export const POST = async (request: Request) => {
       return Response.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    // Session validation
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+  const session = await getServerSession(authOptions);
+
+    const cookieStore = cookies();
+    const sessionUserCookie = (await cookieStore).get('session-user'); // custom cookie for guest
+
+    let userEmail: string | undefined = session?.user?.email;
+
+    if (!userEmail && sessionUserCookie?.value) {
+      const parsedCookie = JSON.parse(sessionUserCookie.value || '{}');
+      userEmail = parsedCookie?.email;
+    }
+
+    if (!userEmail) {
       return Response.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
@@ -23,7 +34,7 @@ export const POST = async (request: Request) => {
     // Get logged in user
     const userQuery = await payload.find({
       collection: 'site-users',
-      where: { email: { equals: session.user.email } },
+      where: { email: { equals: userEmail } },
       limit: 1,
     });
 

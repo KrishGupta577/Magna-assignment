@@ -27,6 +27,7 @@ export const siteUsers: CollectionConfig = {
       admin: { readOnly: true },
       hidden: true,
       defaultValue: '',
+      required: false,
     },
     {
       name: 'referralCode',
