@@ -2,6 +2,9 @@ import configPromise from '@payload-config';
 import { getPayload } from 'payload';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/authOptions';
+import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 
 export const POST = async (request: Request) => {
   try {
@@ -19,13 +22,13 @@ export const POST = async (request: Request) => {
     });
 
     if (!product) {
-      return Response.json({ message: 'Product not found' }, { status: 404 });
+      return NextResponse.json({ message: 'Product not found' }, { status: 404 });
     }
 
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return Response.json({ error: 'User not authenticated' }, { status: 401 });
+      return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
     }
 
     const userQuery = await payload.find({
@@ -36,7 +39,7 @@ export const POST = async (request: Request) => {
 
     const user = userQuery.docs[0];
     if (!user) {
-      return Response.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const cart = user.cart || [];
@@ -77,12 +80,9 @@ export const POST = async (request: Request) => {
       return { productId: id, quantity: it.quantity };
     });
 
-    return Response.json(
-      { message: 'Product added to cart', items },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Product added to cart', items }, { status: 200 });
   } catch (err: any) {
     console.error('Add to cart error:', err);
-    return Response.json({ error: err.message || 'Server Error' }, { status: 500 });
+    return NextResponse.json({ error: err?.message || 'Server Error' }, { status: 500 });
   }
 };
