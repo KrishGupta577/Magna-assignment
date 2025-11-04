@@ -5,13 +5,22 @@ import { signIn as oauthSignIn } from 'next-auth/react'
 import styles from '../auth/AuthForm.module.css'
 import Link from 'next/link'
 
+function getErrorMessage(err: unknown) {
+    if (err instanceof Error) return err.message
+    try {
+        return String(err)
+    } catch {
+        return 'Unknown error'
+    }
+}
+
 export default function SignInPage() {
     const [form, setForm] = useState({ email: '', password: '' })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 
-    const submit = async (e: any) => {
+    const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError(null)
         if (!form.email || !form.password) {
@@ -29,8 +38,8 @@ export default function SignInPage() {
             }
             // assume server created session; redirect
             router.push('/products')
-        } catch (err: any) {
-            setError(err?.message || 'Unknown error')
+        } catch (err: unknown) {
+            setError(getErrorMessage(err) || 'Unknown error')
         } finally {
             setLoading(false)
         }
@@ -67,12 +76,12 @@ export default function SignInPage() {
                 </label>
 
                 <div className={styles.actions}>
-                    <button type="submit" className={styles.primary} disabled={loading}>{loading ? 'Signing in…' : 'Sign In'}</button>
-                    <button type="button" className={styles.ghost} onClick={() => oauthSignIn('google', { callbackUrl: '/products' })}>Continue with Google</button>
+                    <button type="submit" className={styles.primary} disabled={loading}>{loading ? "Signing in…" : "Sign In"}</button>
+                    <button type="button" className={styles.ghost} onClick={() => oauthSignIn("google", { callbackUrl: "/products" })}>Continue with Google</button>
                 </div>
 
                 <div className={styles.footer}>
-                    <span>Don't have an account? </span><Link href="/sign-up">Sign up</Link>
+                    <span>Don&apos;t have an account? </span><Link href="/sign-up">Sign up</Link>
                 </div>
             </form>
         </div>
