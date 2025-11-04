@@ -1,7 +1,7 @@
 import configPromise from '@payload-config';
 import { getPayload } from 'payload';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/authOptions';
 
 export const POST = async (request: Request) => {
   try {
@@ -39,7 +39,7 @@ export const POST = async (request: Request) => {
 
     await payload.update({
       collection: 'site-users',
-      id: user.id, 
+      id: user.id,
       data: { wishlist: updatedWishlist },
     });
 
