@@ -1,8 +1,9 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
+import type { Media } from "../../payload-types";
 
-type CartItem = { productId: string; quantity: number; title?: string; image?: any; price?: number | null };
+type CartItem = { productId: string; quantity: number; title?: string; image?: Media | string | null; price?: number | null };
 
 type CartContextType = {
   items: CartItem[];
@@ -123,7 +124,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     fetchCart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const cartCount = computeCount(items);

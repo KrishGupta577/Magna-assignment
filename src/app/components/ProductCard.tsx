@@ -1,20 +1,28 @@
 "use client";
 
 import { useState } from "react";
+import Image from 'next/image'
 import { useCart } from "../context/CartContext";
 import styles from "./ProductCard.module.css";
+import type { Product as PayloadProduct, Media } from "../../payload-types";
 
-export default function ProductCard({ product }: { product: any }) {
+type UIProduct = Partial<PayloadProduct & { _id?: string; image?: Media | { cloudinaryURL?: string } | null }>;
+
+export default function ProductCard({ product }: { product: UIProduct }) {
     const { addToCart } = useCart();
     const [wishlistStatus, setWishlistStatus] = useState<'idle' | 'adding' | 'added' | 'error'>('idle');
 
-    const title = product?.productName || product?.name || product?.title || product?.id || "Product";
-    const price = product?.price ?? product?.priceInCents ?? null;
+    const title = (product?.productName || String(product?.id ?? '') || "Product");
+    const price = product?.price ?? (product as any)?.priceInCents ?? null;
 
     return (
         <div className={styles.card}>
             <div className={styles.media}>
-                {product?.image ? <img src={product.image.cloudinaryURL} alt={title} /> : <div className={styles.placeholder}>No image</div>}
+                {product?.image && (product as any).image?.cloudinaryURL ? (
+                    <Image src={(product as any).image.cloudinaryURL} alt={title} width={320} height={200} />
+                ) : (
+                    <div className={styles.placeholder}>No image</div>
+                )}
             </div>
             <div className={styles.body}>
                 <div className={styles.title}>{title}</div>
@@ -22,7 +30,7 @@ export default function ProductCard({ product }: { product: any }) {
 
                 <div className={styles.controls}>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                        <button className={styles.add} onClick={() => addToCart(product.id ?? product._id ?? product.id, 1)}>
+                        <button className={styles.add} onClick={() => addToCart(String(product.id ?? ''), 1)}>
                             Add to cart
                         </button>
                         <button
@@ -35,7 +43,7 @@ export default function ProductCard({ product }: { product: any }) {
                                     const res = await fetch('/api/add-to-wishlist', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ productId: product.id ?? product._id ?? product.id }),
+                                        body: JSON.stringify({ productId: product.id ?? '' }),
                                     });
                                     const data = await res.json();
                                     if (res.ok) {

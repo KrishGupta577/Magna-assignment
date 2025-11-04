@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import { useCart } from "@/app/context/CartContext";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "../../components/ProductCard";
 import styles from "./ProductsPage.module.css";
+import type { Product as PayloadProduct } from "../../../payload-types";
 
 export default function ProductsPage() {
-    const [products, setProducts] = useState<any[]>([]);
+    const [products, setProducts] = useState<Partial<PayloadProduct>[]>([]);
     const { cartCount, addToCart } = useCart();
 
     useEffect(() => {
@@ -27,8 +28,8 @@ export default function ProductsPage() {
         <div className={styles.container}>
             <Sidebar />
             <div className={styles.products}>
-                {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                {products.map((product, idx) => (
+                    <ProductCard key={String(product.id ?? idx)} product={product} />
                 ))}
             </div>
         </div>
