@@ -70,7 +70,7 @@ export const POST = async (request: Request) => {
     const updatedUser = await payload.update({
       collection: 'site-users',
       id: user.id,
-      data: { cart: normalizedCart },
+      data: { cart: normalizedCart as any }, // ✅ Fix: bypass TS type checking for relationship field
     });
 
     return NextResponse.json(
