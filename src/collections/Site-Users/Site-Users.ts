@@ -40,20 +40,6 @@ export const siteUsers: CollectionConfig = {
       defaultValue: 0,
     },
     {
-      name: 'cart',
-      type: 'array',
-      label: 'Cart Items',
-      fields: [
-        {
-          name: 'product',
-          type: 'relationship',
-          relationTo: 'products',
-          required: true,
-        },
-        { name: 'quantity', type: 'number', required: true, defaultValue: 1 },
-      ],
-    },
-    {
       name: 'wishlist',
       type: 'relationship',
       relationTo: 'products',

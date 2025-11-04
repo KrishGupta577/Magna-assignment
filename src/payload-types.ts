@@ -72,6 +72,7 @@ export interface Config {
     media: Media;
     'site-users': SiteUser;
     products: Product;
+    cart: Cart;
     accounts: Account;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -84,6 +85,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'site-users': SiteUsersSelect<false> | SiteUsersSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    cart: CartSelect<false> | CartSelect<true>;
     accounts: AccountsSelect<false> | AccountsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -199,13 +201,6 @@ export interface SiteUser {
   googleId?: string | null;
   referralCode: string;
   referralPoints?: number | null;
-  cart?:
-    | {
-        product: number | Product;
-        quantity: number;
-        id?: string | null;
-      }[]
-    | null;
   wishlist?: (number | Product)[] | null;
   referralUsed?: boolean | null;
   updatedAt: string;
@@ -236,6 +231,19 @@ export interface Product {
   price: number;
   description?: string | null;
   image?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cart".
+ */
+export interface Cart {
+  id: number;
+  user: number | SiteUser;
+  product: number | Product;
+  quantity: number;
+  addedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -294,6 +302,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'cart';
+        value: number | Cart;
       } | null)
     | ({
         relationTo: 'accounts';
@@ -406,13 +418,6 @@ export interface SiteUsersSelect<T extends boolean = true> {
   googleId?: T;
   referralCode?: T;
   referralPoints?: T;
-  cart?:
-    | T
-    | {
-        product?: T;
-        quantity?: T;
-        id?: T;
-      };
   wishlist?: T;
   referralUsed?: T;
   updatedAt?: T;
@@ -441,6 +446,18 @@ export interface ProductsSelect<T extends boolean = true> {
   price?: T;
   description?: T;
   image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cart_select".
+ */
+export interface CartSelect<T extends boolean = true> {
+  user?: T;
+  product?: T;
+  quantity?: T;
+  addedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

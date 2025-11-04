@@ -22,43 +22,30 @@ export const POST = async (req: Request) => {
             config: await configPromise,
         });
 
-        const userQuery = await payload.find({
-            collection: 'site-users',
-            where: { email: { equals: session.user.email } },
-            limit: 1,
-        });
-
+        const userQuery = await (payload as any).find({ collection: 'site-users', where: { email: { equals: session.user.email } }, limit: 1 });
         const user = userQuery.docs[0];
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-        const updatedCart = (user.cart || []).map((item: any) => {
-            const id = typeof item.product === 'object'
-                ? item.product?.id || item.product?._id
-                : item.product;
+        // find cart item for this user+product
+        const cartQuery = await (payload as any).find({ collection: 'cart', where: { user: { equals: user.id }, product: { equals: productId } }, limit: 1 });
+        const cartItem = cartQuery.docs[0];
 
-            if (String(id) === String(productId)) {
-                if (item.quantity > 1) {
-                    return { ...item, quantity: item.quantity - 1 };
-                } else {
-                    return null;
-                }
-            }
-            return item;
-        }).filter(Boolean);
+        if (!cartItem) {
+            // nothing to remove
+            return NextResponse.json({ items: [] }, { status: 200 });
+        }
 
-        const updatedUser = await payload.update({
-            collection: 'site-users',
-            id: user.id,
-            data: { cart: updatedCart },
-        });
+        if ((cartItem.quantity || 0) > 1) {
+            await (payload as any).update({ collection: 'cart', id: cartItem.id, data: { quantity: (cartItem.quantity || 0) - 1 }, overrideAccess: true });
+        } else {
+            await (payload as any).delete({ collection: 'cart', id: cartItem.id, overrideAccess: true });
+        }
 
-        const items = (updatedUser.cart || []).map((item: any) => {
+        const remaining = await (payload as any).find({ collection: 'cart', where: { user: { equals: user.id } }, limit: 100 });
+        const items = (remaining.docs || []).map((item: any) => {
             const raw = item.product;
             const id = typeof raw === 'object' ? raw.id || raw._id : raw;
-            return {
-                productId: id,
-                quantity: item.quantity,
-            };
+            return { productId: id, quantity: item.quantity };
         });
 
         return NextResponse.json({ items }, { status: 200 });
