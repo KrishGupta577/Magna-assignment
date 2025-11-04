@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
-import { siteUsers } from './collections/Site-Users/site-users';
+import { siteUsers } from './collections/Site-Users/Site-Users';
 import { Products } from './collections/Products';
 
 const filename = fileURLToPath(import.meta.url)
