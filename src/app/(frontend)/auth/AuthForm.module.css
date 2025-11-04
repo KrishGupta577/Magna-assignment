@@ -1,0 +1,25 @@
+.wrap {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 16px;
+}
+.form {
+  width:360px;
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:8px;
+  padding:20px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.04);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.title { margin:0 0 4px 0; font-size:1.25rem }
+.label { display:flex; flex-direction:column; gap:6px; font-size:0.9rem }
+.input { padding:8px 10px; border:1px solid #ddd; border-radius:6px }
+.actions { display:flex; gap:8px; align-items:center }
+.primary { background:#111; color:#fff; border:none; padding:10px 14px; border-radius:6px; cursor:pointer }
+.ghost { background:transparent; border:1px solid #ddd; padding:8px 12px; border-radius:6px; cursor:pointer }
+.footer { font-size:0.9rem; color:#555 }
+.error { background:#ffecec; color:#900; padding:8px; border-radius:6px }

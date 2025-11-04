@@ -1,0 +1,9 @@
+.container { padding:20px }
+.list { list-style:none; padding:0; display:flex; flex-direction:column; gap:12px }
+.row { display:flex; justify-content:space-between; align-items:center; padding:10px; border:1px solid #eee; border-radius:8px }
+.meta { display:flex; gap:10px; align-items:center }
+.thumb { width:60px; height:60px; object-fit:cover; border-radius:6px }
+.thumbPlaceholder { width:60px; height:60px; background:#f4f4f4; border-radius:6px }
+.title { font-weight:600 }
+.price { color:#666 }
+.remove { background:#ffeded; border:1px solid #ffbcbc; color:#900; padding:6px 8px; border-radius:6px }

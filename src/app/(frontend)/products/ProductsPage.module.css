@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  gap: 24px;
+}
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  flex: 1;
+}
